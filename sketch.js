@@ -231,7 +231,7 @@ function whitePlay(cap){
     isPossible = true
   }
 
-  if(isPossible){
+  if(isPossible && cap+dice[1].value < 25 && cap+dice[2].value < 25){
     if(blackPulPositions[cap+dice[1].value]==0 && dice[1].used==0){
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
@@ -263,7 +263,7 @@ function blackPlay(cap){
     isPossible = true
   }
 
-  if(isPossible){
+  if(isPossible && cap-dice[1].value > 0 && cap-dice[2].value > 0){
     if(whitePulPositions[cap-dice[1].value]==0 && dice[1].used==0){
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
