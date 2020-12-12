@@ -9,6 +9,7 @@ let whitePulPositions = {
   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 5,
   13: 0, 14: 0, 15: 0, 16: 0, 17: 3, 18: 0,
   19: 5, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
+  0: 0,
 }
 
 let blackPulPositions = {
@@ -16,6 +17,7 @@ let blackPulPositions = {
   7: 0, 8: 3, 9: 0, 10: 0, 11: 0, 12: 0,
   13: 5, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
   19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 2,
+  25: 0,
 }
 
 let isWhiteTurn = true;
@@ -60,15 +62,44 @@ function draw() {
   line(capWidth*6,0,capWidth*6,height)
   line(capWidth*12,0,capWidth*12,height)
 
-  fill(255)
+  if(isWhiteTurn){
+    fill(255)
+  }else{
+    fill(0)
+  }
   square(capWidth*12.5 - 45/2 ,capHeight,45)
   square(capWidth*12.5 - 45/2 ,capHeight+50,45)
 
   textSize(30);
-  fill(0);
+
+  if(!isWhiteTurn){
+    fill(255)
+  }else{
+    fill(0)
+  }
   text(dice[1].value,capWidth*12.42,capHeight+65/2);
-  fill(0);
+  if(!isWhiteTurn){
+    fill(255)
+  }else{
+    fill(0)
+  }
   text(dice[2].value,capWidth*12.42,capHeight+65/2+50);
+
+
+  if(whitePulPositions[0]!=0){
+    fill(255)
+    circle((capWidth/2)+12*capWidth,height-(pul/2),pul)
+    fill(63,0,0)
+    text(whitePulPositions[0],capWidth*12.42,height-pul/2.7);
+  }
+
+  if(blackPulPositions[25]!=0){
+    fill(63,0,0)
+    circle((capWidth/2)+12*capWidth,pul/2,pul)
+    fill(255)
+    text(blackPulPositions[25],capWidth*12.42,pul/1.5);
+  }
+
 
 
   //http://93.123.116.130:4000
@@ -98,31 +129,26 @@ function draw() {
 
 function mousePressed() {
   calculatePossibleMoves()
-
   let x = mouseX
   let y = mouseY
-
   let cap = capNumber(x,y)
-  let isPossible = possibleMoves.includes(cap)
+  console.log(cap)
 
-  if(isPossible){
-    if(blackPulPositions[cap+dice[1].value]==0 && dice[1].used==0){
-      whitePulPositions[cap]-=1
-      whitePulPositions[cap+dice[1].value]+=1
-      dice[1].used = 1
-    }else if(blackPulPositions[cap+dice[2].value]==0 && dice[2].used==0){
-      whitePulPositions[cap]-=1
-      whitePulPositions[cap+dice[2].value]+=1
-      dice[2].used = 1
+
+  if(isWhiteTurn){
+    if(!(whitePulPositions[0]!=0 && cap != 0)){
+      whitePlay(cap)
+    }
+  }else{
+    if(!(blackPulPositions[25]!=0 && cap != 25)){
+      blackPlay(cap)
     }
   }
 
-  // if(x<=capWidth && y <= capHeight){
-  //   whitePulPositions[n]-=1
-  //   whitePulPositions[n+1]++
-  //   n++
-  // }
-
+  if(dice[1].used == 1 && dice[2].used == 1){
+    isWhiteTurn = !isWhiteTurn
+    throwDice()
+  }
   redraw()
 }
 
@@ -141,17 +167,41 @@ function capNumber(x, y){
         cap = 12 + (13 - capNumber)
         break
       default:
-        cap = 0
+        cap = -1
         break
     }
+  }else if(capNumber == 13){
+    if(y >= capHeight && y <= height-capHeight){
+      let helper = dice[1]
+
+      dice[1] = dice[2]
+      dice[2] = helper
+      cap = -1
+    }else if(y < capHeight/2){
+      if(!isWhiteTurn){
+        cap = 25
+      }else{
+        cap = -1
+      }
+    }else if(y > height - capHeight/2){
+      if(isWhiteTurn){
+        cap = 0
+      }else{
+        cap = -1
+      }
+    }else{
+      cap = -1
+    }
   }else{
-    cap = 0
+    cap = -1
   }
 
   return cap
 }
 
 function calculatePossibleMoves(){
+  possibleMoves = []
+
   if(isWhiteTurn){
     for(i = 1; i <= 24; i++){
       if(whitePulPositions[i] != 0){
@@ -172,4 +222,68 @@ function throwDice() {
   dice[2].value = floor(random(1,7))
   dice[1].used = 0
   dice[2].used = 0
+}
+
+function whitePlay(cap){
+  let isPossible = possibleMoves.includes(cap)
+
+  if(cap == 0 && whitePulPositions[0] > 0){
+    isPossible = true
+  }
+
+  if(isPossible){
+    if(blackPulPositions[cap+dice[1].value]==0 && dice[1].used==0){
+      whitePulPositions[cap]-=1
+      whitePulPositions[cap+dice[1].value]+=1
+      dice[1].used = 1
+    }else if(blackPulPositions[cap+dice[1].value]==1 && dice[1].used==0){
+      whitePulPositions[cap]-=1
+      whitePulPositions[cap+dice[1].value]+=1
+      blackPulPositions[cap+dice[1].value]-=1
+      blackPulPositions[25]+=1
+      dice[1].used = 1
+    }else if(blackPulPositions[cap+dice[2].value]==0 && dice[2].used==0){
+      whitePulPositions[cap]-=1
+      whitePulPositions[cap+dice[2].value]+=1
+      dice[2].used = 1
+    }else if(blackPulPositions[cap+dice[2].value]==1 && dice[2].used==0){
+      whitePulPositions[cap]-=1
+      whitePulPositions[cap+dice[2].value]+=1
+      blackPulPositions[cap+dice[2].value]-=1
+      blackPulPositions[25]+=1
+      dice[2].used = 1
+    }
+  }
+}
+
+function blackPlay(cap){
+  let isPossible = possibleMoves.includes(cap)
+
+  if(cap == 25 && blackPulPositions[25] > 0){
+    isPossible = true
+  }
+
+  if(isPossible){
+    if(whitePulPositions[cap-dice[1].value]==0 && dice[1].used==0){
+      blackPulPositions[cap]-=1
+      blackPulPositions[cap-dice[1].value]+=1
+      dice[1].used = 1
+    }else if(whitePulPositions[cap-dice[1].value]==1 && dice[1].used==0){
+      blackPulPositions[cap]-=1
+      blackPulPositions[cap-dice[1].value]+=1
+      whitePulPositions[cap-dice[1].value]-=1
+      whitePulPositions[0]+=1
+      dice[1].used = 1
+    }else if(whitePulPositions[cap-dice[2].value]==0 && dice[2].used==0){
+      blackPulPositions[cap]-=1
+      blackPulPositions[cap-dice[2].value]+=1
+      dice[2].used = 1
+    }else if(whitePulPositions[cap-dice[2].value]==1 && dice[2].used==0){
+      blackPulPositions[cap]-=1
+      blackPulPositions[cap-dice[2].value]+=1
+      whitePulPositions[cap-dice[2].value]-=1
+      whitePulPositions[0]+=1
+      dice[2].used = 1
+    }
+  }
 }
