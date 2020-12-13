@@ -29,11 +29,13 @@ let possibleMoves = []
 let dice = {
   1: {
     value: 0,
-    used: 0
+    used: 0,
+    doublesUsedCounter: 0,
   },
   2: {
     value: 0,
-    used: 0
+    used: 0,
+    doublesUsedCounter: 0,
   },
 }
 
@@ -232,11 +234,15 @@ function calculatePossibleMoves(){
 }
 
 function throwDice() {
-  dice[1].value = floor(random(1,7))
-  dice[2].value = floor(random(1,7))
+  dice[1].value = 3//floor(random(1,7))
+  dice[2].value = 3//floor(random(1,7))
   dice[1].used = 0
   dice[2].used = 0
+  dice[1].doublesUsedCounter = 0
+  dice[2].doublesUsedCounter = 0
 }
+
+
 
 function whitePlay(cap){
   let isPossible = possibleMoves.includes(cap)
@@ -272,26 +278,66 @@ function whitePlay(cap){
       lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
-      dice[1].used = 1
+      if(isDoubles())
+      {
+        if(dice[1].doublesUsedCounter < 1){
+          dice[1].doublesUsedCounter += 1
+        }else{
+          dice[1].doublesUsedCounter += 1
+          dice[1].used = 1
+        }
+      }else{
+        dice[1].used = 1
+      }
     }else if(blackPulPositions[cap+dice[1].value]==1 && dice[1].used==0 && cap+dice[1].value <= range){
       lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
       blackPulPositions[cap+dice[1].value]-=1
       blackPulPositions[25]+=1
-      dice[1].used = 1
+      if(isDoubles())
+      {
+        if(dice[1].doublesUsedCounter < 1){
+          dice[1].doublesUsedCounter += 1
+        }else{
+          dice[1].doublesUsedCounter += 1
+          dice[1].used = 1
+        }
+      }else{
+        dice[1].used = 1
+      }
     }else if(blackPulPositions[cap+dice[2].value]==0 && dice[2].used==0 && cap+dice[2].value <= range){
       lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
-      dice[2].used = 1
+      if(isDoubles())
+      {
+        if(dice[2].doublesUsedCounter < 1){
+          dice[2].doublesUsedCounter += 1
+        }else{
+          dice[2].doublesUsedCounter += 1
+          dice[2].used = 1
+        }
+      }else{
+        dice[2].used = 1
+      }
     }else if(blackPulPositions[cap+dice[2].value]==1 && dice[2].used==0 && cap+dice[2].value <= range){
       lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
       blackPulPositions[cap+dice[2].value]-=1
       blackPulPositions[25]+=1
-      dice[2].used = 1
+      if(isDoubles())
+      {
+        if(dice[2].doublesUsedCounter < 1){
+          dice[2].doublesUsedCounter += 1
+        }else{
+          dice[2].doublesUsedCounter += 1
+          dice[2].used = 1
+        }
+      }else{
+        dice[2].used = 1
+      }
     }
   }
 }
@@ -330,26 +376,66 @@ function blackPlay(cap){
       lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
-      dice[1].used = 1
+      if(isDoubles())
+      {
+        if(dice[1].doublesUsedCounter < 1){
+          dice[1].doublesUsedCounter += 1
+        }else{
+          dice[1].doublesUsedCounter += 1
+          dice[1].used = 1
+        }
+      }else{
+        dice[1].used = 1
+      }
     }else if(whitePulPositions[cap-dice[1].value]==1 && dice[1].used==0 && cap-dice[1].value >= range){
       lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
       whitePulPositions[cap-dice[1].value]-=1
       whitePulPositions[0]+=1
-      dice[1].used = 1
+      if(isDoubles())
+      {
+        if(dice[1].doublesUsedCounter < 1){
+          dice[1].doublesUsedCounter += 1
+        }else{
+          dice[1].doublesUsedCounter += 1
+          dice[1].used = 1
+        }
+      }else{
+        dice[1].used = 1
+      }
     }else if(whitePulPositions[cap-dice[2].value]==0 && dice[2].used==0 && cap-dice[2].value >= range){
       lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
-      dice[2].used = 1
+      if(isDoubles())
+      {
+        if(dice[2].doublesUsedCounter < 1){
+          dice[2].doublesUsedCounter += 1
+        }else{
+          dice[2].doublesUsedCounter += 1
+          dice[2].used = 1
+        }
+      }else{
+        dice[2].used = 1
+      }
     }else if(whitePulPositions[cap-dice[2].value]==1 && dice[2].used==0 && cap-dice[2].value >= range){
       lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
       whitePulPositions[cap-dice[2].value]-=1
       whitePulPositions[0]+=1
-      dice[2].used = 1
+      if(isDoubles())
+      {
+        if(dice[2].doublesUsedCounter < 1){
+          dice[2].doublesUsedCounter += 1
+        }else{
+          dice[2].doublesUsedCounter += 1
+          dice[2].used = 1
+        }
+      }else{
+        dice[2].used = 1
+      }
     }
   }
 }
@@ -371,6 +457,34 @@ function undo(){
       blackPulPositions = lastState
     }
     dice[2].used = 0
+  }else if(isDoubles() && dice[1].doublesUsedCounter + dice[2].doublesUsedCounter < 4 && 
+            !(dice[1].used==1 && dice[2].used==1) && !(dice[1].doublesUsedCounter==0 && dice[2].doublesUsedCounter==0)){
+    if(isWhiteTurn){
+      whitePulPositions = lastState
+    }else{
+      blackPulPositions = lastState
+    }
+    if(dice[1].used == 1){
+      dice[1].used=0
+      dice[1].doublesUsedCounter = 1
+    }else if(dice[2].used == 1){
+      dice[2].used=0
+      dice[2].doublesUsedCounter = 1
+    }else{
+      if(dice[1].doublesUsedCounter==1){
+        dice[1].doublesUsedCounter = 0
+      }else if(dice[2].doublesUsedCounter==1){
+        dice[2].doublesUsedCounter = 0
+      }
+    }
   }
+}
 
+function isDoubles()
+{
+  if(dice[1].value == dice[2].value){
+    return true
+  }else{
+    return false
+  }
 }
