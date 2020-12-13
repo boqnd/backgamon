@@ -9,7 +9,7 @@ let whitePulPositions = {
   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 5,
   13: 0, 14: 0, 15: 0, 16: 0, 17: 3, 18: 0,
   19: 5, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
-  0: 0,
+  0: 0, 25: 0,
 }
 
 let blackPulPositions = {
@@ -17,8 +17,10 @@ let blackPulPositions = {
   7: 0, 8: 3, 9: 0, 10: 0, 11: 0, 12: 0,
   13: 5, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
   19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 2,
-  25: 0,
+  25: 0, 0: 0,
 }
+
+let lastState = whitePulPositions
 
 let isWhiteTurn = true;
 
@@ -61,6 +63,13 @@ function draw() {
 
   line(capWidth*6,0,capWidth*6,height)
   line(capWidth*12,0,capWidth*12,height)
+
+  fill(128,128,0)
+  circle(width/2,height/2,pul)
+  textSize(18);
+  fill(0)
+  text("undo",width/2-pul/3,height/2+pul/12);
+
 
   if(isWhiteTurn){
     fill(255)
@@ -134,14 +143,19 @@ function mousePressed() {
   let cap = capNumber(x,y)
   console.log(cap)
 
+  let d = dist(x, y, width/2, height/2);
 
-  if(isWhiteTurn){
-    if(!(whitePulPositions[0]!=0 && cap != 0)){
-      whitePlay(cap)
-    }
+  if (d < pul/2) {
+    undo()
   }else{
-    if(!(blackPulPositions[25]!=0 && cap != 25)){
-      blackPlay(cap)
+    if(isWhiteTurn){
+      if(!(whitePulPositions[0]!=0 && cap != 0)){
+        whitePlay(cap)
+      }
+    }else{
+      if(!(blackPulPositions[25]!=0 && cap != 25)){
+        blackPlay(cap)
+      }
     }
   }
 
@@ -231,22 +245,47 @@ function whitePlay(cap){
     isPossible = true
   }
 
-  if(isPossible && cap+dice[1].value < 25 && cap+dice[2].value < 25){
-    if(blackPulPositions[cap+dice[1].value]==0 && dice[1].used==0){
+  if(whitePulPositions[0] > 0 && (blackPulPositions[dice[1].value] > 0 || dice[1].used == 1)
+    && (blackPulPositions[dice[2].value] > 0 || dice[2].used == 1)){
+   isPossible = false
+   dice[1].used = 1
+   dice[2].used = 1
+  }
+
+  let allInHome = true
+
+  for(i = 1; i <= 18; i ++){
+    if(whitePulPositions[i] != 0){
+      allInHome = false
+    }
+  }
+
+  let range = 24
+
+  if(allInHome){
+    range = 25
+  }
+
+  if(isPossible){
+    if(blackPulPositions[cap+dice[1].value]==0 && dice[1].used==0 && cap+dice[1].value <= range){
+      lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
       dice[1].used = 1
-    }else if(blackPulPositions[cap+dice[1].value]==1 && dice[1].used==0){
+    }else if(blackPulPositions[cap+dice[1].value]==1 && dice[1].used==0 && cap+dice[1].value <= range){
+      lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
       blackPulPositions[cap+dice[1].value]-=1
       blackPulPositions[25]+=1
       dice[1].used = 1
-    }else if(blackPulPositions[cap+dice[2].value]==0 && dice[2].used==0){
+    }else if(blackPulPositions[cap+dice[2].value]==0 && dice[2].used==0 && cap+dice[2].value <= range){
+      lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
       dice[2].used = 1
-    }else if(blackPulPositions[cap+dice[2].value]==1 && dice[2].used==0){
+    }else if(blackPulPositions[cap+dice[2].value]==1 && dice[2].used==0 && cap+dice[2].value <= range){
+      lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
       blackPulPositions[cap+dice[2].value]-=1
@@ -263,22 +302,47 @@ function blackPlay(cap){
     isPossible = true
   }
 
-  if(isPossible && cap-dice[1].value > 0 && cap-dice[2].value > 0){
-    if(whitePulPositions[cap-dice[1].value]==0 && dice[1].used==0){
+  if(blackPulPositions[25] > 0 && (whitePulPositions[25 - dice[1].value] > 0 || dice[1].used == 1)
+    && (whitePulPositions[25 - dice[2].value] > 0 || dice[2].used == 1)){
+   isPossible = false
+   dice[1].used = 1
+   dice[2].used = 1
+  }
+
+  let allInHome = true
+
+  for(i = 7; i <= 24; i ++){
+    if(blackPulPositions[i] != 0){
+      allInHome = false
+    }
+  }
+
+  let range = 1
+
+  if(allInHome){
+    range = 0
+  }
+
+  if(isPossible){
+    if(whitePulPositions[cap-dice[1].value]==0 && dice[1].used==0 && cap-dice[1].value >= range){
+      lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
       dice[1].used = 1
-    }else if(whitePulPositions[cap-dice[1].value]==1 && dice[1].used==0){
+    }else if(whitePulPositions[cap-dice[1].value]==1 && dice[1].used==0 && cap-dice[1].value >= range){
+      lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
       whitePulPositions[cap-dice[1].value]-=1
       whitePulPositions[0]+=1
       dice[1].used = 1
-    }else if(whitePulPositions[cap-dice[2].value]==0 && dice[2].used==0){
+    }else if(whitePulPositions[cap-dice[2].value]==0 && dice[2].used==0 && cap-dice[2].value >= range){
+      lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
       dice[2].used = 1
-    }else if(whitePulPositions[cap-dice[2].value]==1 && dice[2].used==0){
+    }else if(whitePulPositions[cap-dice[2].value]==1 && dice[2].used==0 && cap-dice[2].value >= range){
+      lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
       whitePulPositions[cap-dice[2].value]-=1
@@ -286,4 +350,25 @@ function blackPlay(cap){
       dice[2].used = 1
     }
   }
+}
+
+function undo(){
+  if((dice[1].used == 1 && dice[2].used == 0)){
+    if(isWhiteTurn)
+    {
+      whitePulPositions = lastState
+    }else{
+      blackPulPositions = lastState
+    }
+    dice[1].used = 0
+  }else if(dice[1].used == 0 && dice[2].used == 1){
+    if(isWhiteTurn)
+    {
+      whitePulPositions = lastState
+    }else{
+      blackPulPositions = lastState
+    }
+    dice[2].used = 0
+  }
+
 }
