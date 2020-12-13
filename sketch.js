@@ -245,8 +245,8 @@ function whitePlay(cap){
     isPossible = true
   }
 
-  if(whitePulPositions[0] > 0 && (blackPulPositions[dice[1].value] > 0 || dice[1].used == 1)
-    && (blackPulPositions[dice[2].value] > 0 || dice[2].used == 1)){
+  if(whitePulPositions[0] > 0 && (blackPulPositions[dice[1].value] > 1 || dice[1].used == 1)
+    && (blackPulPositions[dice[2].value] > 1 || dice[2].used == 1)){
    isPossible = false
    dice[1].used = 1
    dice[2].used = 1
@@ -259,6 +259,7 @@ function whitePlay(cap){
       allInHome = false
     }
   }
+  console.log(allInHome)
 
   let range = 24
 
@@ -302,8 +303,8 @@ function blackPlay(cap){
     isPossible = true
   }
 
-  if(blackPulPositions[25] > 0 && (whitePulPositions[25 - dice[1].value] > 0 || dice[1].used == 1)
-    && (whitePulPositions[25 - dice[2].value] > 0 || dice[2].used == 1)){
+  if(blackPulPositions[25] > 0 && (whitePulPositions[25 - dice[1].value] > 1 || dice[1].used == 1)
+    && (whitePulPositions[25 - dice[2].value] > 1 || dice[2].used == 1)){
    isPossible = false
    dice[1].used = 1
    dice[2].used = 1
@@ -316,6 +317,7 @@ function blackPlay(cap){
       allInHome = false
     }
   }
+  console.log(allInHome)
 
   let range = 1
 
