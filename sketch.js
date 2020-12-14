@@ -21,15 +21,15 @@ let blackPulPositions = {
 }
 
 // let whitePulPositions = {
-//   1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
-//   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
+//   1: 5, 2: 5, 3: 0, 4: 5, 5: 5, 6: 5,
+//   7: 5, 8: 5, 9: 5, 10: 5, 11: 5, 12: 5,
 //   13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
-//   19: 0, 20: 1, 21: 2, 22: 3, 23: 4, 24: 5,
+//   19: 0, 20: 0, 21: 2, 22: 0, 23: 0, 24: 0,
 //   0: 0, 25: 0,
 // }
 
 // let blackPulPositions = {
-//   1: 5, 2: 4, 3: 3, 4: 2, 5: 1, 6: 0,
+//   1: 0, 2: 0, 3: 2, 4: 0, 5: 0, 6: 0,
 //   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
 //   13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
 //   19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
@@ -300,8 +300,39 @@ function whitePlay(cap){
     }
   }
 
-  console.log("range " + range)
-  console.log(blackPulPositions[cap+dice[1].value]==null)
+  let noLegalMoves = true
+
+  possibleMoves.forEach(c => {
+    if(dice[1].used == 0){
+      if(blackPulPositions[c + dice[1].value] == 0 || blackPulPositions[c + dice[1].value] == null){
+        if(!allInHome){
+          if(c + dice[1].value <= 24){
+            noLegalMoves = false
+          }
+        }else{
+          noLegalMoves = false
+        }
+      }
+    }
+    if(dice[2].used == 0){
+      if(blackPulPositions[c + dice[2].value] == 0 || blackPulPositions[c + dice[1].value] == null){
+        if(!allInHome){
+          if(c + dice[2].value <= 24){
+            noLegalMoves = false
+          }
+        }else{
+          noLegalMoves = false
+        }
+      }
+    }
+  })
+
+
+  if(noLegalMoves){
+    dice[1].used = 1
+    dice[2].used = 1
+    isPossible = false
+  }
 
   if(isPossible){
     if((blackPulPositions[cap+dice[1].value]==0 || blackPulPositions[cap+dice[1].value]==null) && dice[1].used==0 && cap+dice[1].value <= range){
@@ -411,6 +442,45 @@ function blackPlay(cap){
         break
       }
     }
+  }
+
+  let noLegalMoves = true
+
+  possibleMoves.forEach(c => {
+    if(dice[1].used == 0){
+      console.log(1)
+      if(whitePulPositions[c - dice[1].value] == 0 || whitePulPositions[c - dice[1].value] == null){
+        console.log(2)
+        if(!allInHome){
+          console.log(3)
+          if(c - dice[1].value >= 1){
+            console.log(4)
+            noLegalMoves = false
+          }
+        }else{
+          console.log(5)
+          noLegalMoves = false
+        }
+      }
+    }
+    if(dice[2].used == 0){
+      if(whitePulPositions[c - dice[2].value] == 0 || whitePulPositions[c - dice[2].value] == null){
+        if(!allInHome){
+          if(c - dice[2].value >= 1){
+            noLegalMoves = false
+          }
+        }else{
+          noLegalMoves = false
+        }
+      }
+    }
+  })
+
+
+  if(noLegalMoves){
+    dice[1].used = 1
+    dice[2].used = 1
+    isPossible = false
   }
 
   if(isPossible){
