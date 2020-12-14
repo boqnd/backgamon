@@ -21,15 +21,15 @@ let blackPulPositions = {
 }
 
 // let whitePulPositions = {
-//   1: 5, 2: 5, 3: 0, 4: 5, 5: 5, 6: 5,
-//   7: 5, 8: 5, 9: 5, 10: 5, 11: 5, 12: 5,
+//   1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+//   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
 //   13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
-//   19: 0, 20: 0, 21: 2, 22: 0, 23: 0, 24: 0,
+//   19: 5, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
 //   0: 0, 25: 0,
 // }
 
 // let blackPulPositions = {
-//   1: 0, 2: 0, 3: 2, 4: 0, 5: 0, 6: 0,
+//   1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 5,
 //   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
 //   13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
 //   19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
@@ -155,33 +155,36 @@ function draw() {
 }
 
 function mousePressed() {
-  calculatePossibleMoves()
-  let x = mouseX
-  let y = mouseY
-  let cap = capNumber(x,y)
-  console.log(cap)
+  if(!isGameOver()){
+    calculatePossibleMoves()
+    let x = mouseX
+    let y = mouseY
+    let cap = capNumber(x,y)
+    console.log(cap)
 
-  let d = dist(x, y, width/2, height/2);
+    let d = dist(x, y, width/2, height/2);
 
-  if (d < pul/2) {
-    undo()
-  }else{
-    if(isWhiteTurn){
-      if(!(whitePulPositions[0]!=0 && cap != 0)){
-        whitePlay(cap)
-      }
+    if (d < pul/2) {
+      undo()
     }else{
-      if(!(blackPulPositions[25]!=0 && cap != 25)){
-        blackPlay(cap)
+      if(isWhiteTurn){
+        if(!(whitePulPositions[0]!=0 && cap != 0)){
+          whitePlay(cap)
+        }
+      }else{
+        if(!(blackPulPositions[25]!=0 && cap != 25)){
+          blackPlay(cap)
+        }
       }
     }
-  }
 
-  if(dice[1].used == 1 && dice[2].used == 1){
-    isWhiteTurn = !isWhiteTurn
-    throwDice()
+    if(dice[1].used == 1 && dice[2].used == 1){
+      isWhiteTurn = !isWhiteTurn
+      throwDice()
+    }
+
+    redraw()
   }
-  redraw()
 }
 
 function capNumber(x, y){
@@ -599,4 +602,24 @@ function isDoubles()
   }else{
     return false
   }
+}
+
+function isGameOver(){
+  let whiteFinished = true;
+  let blackFinished = true;
+
+  for(i = 1; i<=24; i++)
+  {
+    if(whitePulPositions[i] > 0){
+      whiteFinished = false
+    }
+    if(blackPulPositions[i] > 0){
+      blackFinished = false
+    }
+    if(!whiteFinished && !blackFinished){
+      return false;
+    }
+  }
+
+  return true
 }
