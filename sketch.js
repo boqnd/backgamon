@@ -4,19 +4,35 @@ const capHeight = height*3/7
 const capWidth = width/12
 const pul = capHeight/5
 
+// let whitePulPositions = {
+//   1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+//   7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 5,
+//   13: 0, 14: 0, 15: 0, 16: 0, 17: 3, 18: 0,
+//   19: 5, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
+//   0: 0, 25: 0,
+// }
+
+// let blackPulPositions = {
+//   1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 5,
+//   7: 0, 8: 3, 9: 0, 10: 0, 11: 0, 12: 0,
+//   13: 5, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
+//   19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 2,
+//   25: 0, 0: 0,
+// }
+
 let whitePulPositions = {
-  1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
-  7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 5,
-  13: 0, 14: 0, 15: 0, 16: 0, 17: 3, 18: 0,
-  19: 5, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
+  1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+  7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
+  13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
+  19: 0, 20: 1, 21: 2, 22: 3, 23: 4, 24: 5,
   0: 0, 25: 0,
 }
 
 let blackPulPositions = {
-  1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 5,
-  7: 0, 8: 3, 9: 0, 10: 0, 11: 0, 12: 0,
-  13: 5, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
-  19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 2,
+  1: 5, 2: 4, 3: 3, 4: 2, 5: 1, 6: 0,
+  7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
+  13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0,
+  19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
   25: 0, 0: 0,
 }
 
@@ -234,8 +250,8 @@ function calculatePossibleMoves(){
 }
 
 function throwDice() {
-  dice[1].value = 3//floor(random(1,7))
-  dice[2].value = 3//floor(random(1,7))
+  dice[1].value = floor(random(1,7))
+  dice[2].value = floor(random(1,7))
   dice[1].used = 0
   dice[2].used = 0
   dice[1].doublesUsedCounter = 0
@@ -265,16 +281,26 @@ function whitePlay(cap){
       allInHome = false
     }
   }
-  console.log(allInHome)
-
   let range = 24
 
   if(allInHome){
     range = 25
+
+    for(i = 19; i < 24; i++) {
+
+      if(whitePulPositions[i] == 0){
+        range += 1;
+      }else{
+        break
+      }
+    }
   }
 
+  console.log("range " + range)
+  console.log(blackPulPositions[cap+dice[1].value]==null)
+
   if(isPossible){
-    if(blackPulPositions[cap+dice[1].value]==0 && dice[1].used==0 && cap+dice[1].value <= range){
+    if((blackPulPositions[cap+dice[1].value]==0 || blackPulPositions[cap+dice[1].value]==null) && dice[1].used==0 && cap+dice[1].value <= range){
       lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
@@ -306,7 +332,7 @@ function whitePlay(cap){
       }else{
         dice[1].used = 1
       }
-    }else if(blackPulPositions[cap+dice[2].value]==0 && dice[2].used==0 && cap+dice[2].value <= range){
+    }else if((blackPulPositions[cap+dice[2].value]==0 || blackPulPositions[cap+dice[2].value]==null) && dice[2].used==0 && cap+dice[2].value <= range){
       lastState = Object.assign({}, whitePulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
@@ -363,16 +389,24 @@ function blackPlay(cap){
       allInHome = false
     }
   }
-  console.log(allInHome)
 
   let range = 1
 
   if(allInHome){
     range = 0
+
+    for(i = 6; i > 1; i--) {
+
+      if(blackPulPositions[i] == 0){
+        range -= 1;
+      }else{
+        break
+      }
+    }
   }
 
   if(isPossible){
-    if(whitePulPositions[cap-dice[1].value]==0 && dice[1].used==0 && cap-dice[1].value >= range){
+    if((whitePulPositions[cap+dice[1].value]==0 || whitePulPositions[cap+dice[1].value]==null) && dice[1].used==0 && cap-dice[1].value >= range){
       lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
@@ -404,7 +438,7 @@ function blackPlay(cap){
       }else{
         dice[1].used = 1
       }
-    }else if(whitePulPositions[cap-dice[2].value]==0 && dice[2].used==0 && cap-dice[2].value >= range){
+    }else if((whitePulPositions[cap+dice[2].value]==0 || whitePulPositions[cap+dice[2].value]==null) && dice[2].used==0 && cap-dice[2].value >= range){
       lastState = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
