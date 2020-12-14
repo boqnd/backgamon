@@ -291,6 +291,10 @@ function whitePlay(cap){
       if(whitePulPositions[i] == 0){
         range += 1;
       }else{
+        if(cap != i)
+        {
+          range = 25
+        }
         break
       }
     }
@@ -400,6 +404,10 @@ function blackPlay(cap){
       if(blackPulPositions[i] == 0){
         range -= 1;
       }else{
+        if(cap != i)
+        {
+          range = 0
+        }
         break
       }
     }
