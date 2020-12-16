@@ -36,7 +36,9 @@ let blackPulPositions = {
 //   25: 0, 0: 0,
 // }
 
-let lastState = whitePulPositions
+let lastStateWhite = whitePulPositions 
+let lastStateBlack = blackPulPositions
+
 
 let isWhiteTurn = true;
 
@@ -339,7 +341,8 @@ function whitePlay(cap){
 
   if(isPossible){
     if((blackPulPositions[cap+dice[1].value]==0 || blackPulPositions[cap+dice[1].value]==null) && dice[1].used==0 && cap+dice[1].value <= range){
-      lastState = Object.assign({}, whitePulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
       if(isDoubles())
@@ -354,7 +357,8 @@ function whitePlay(cap){
         dice[1].used = 1
       }
     }else if(blackPulPositions[cap+dice[1].value]==1 && dice[1].used==0 && cap+dice[1].value <= range){
-      lastState = Object.assign({}, whitePulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[1].value]+=1
       blackPulPositions[cap+dice[1].value]-=1
@@ -371,7 +375,8 @@ function whitePlay(cap){
         dice[1].used = 1
       }
     }else if((blackPulPositions[cap+dice[2].value]==0 || blackPulPositions[cap+dice[2].value]==null) && dice[2].used==0 && cap+dice[2].value <= range){
-      lastState = Object.assign({}, whitePulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
       if(isDoubles())
@@ -386,7 +391,8 @@ function whitePlay(cap){
         dice[2].used = 1
       }
     }else if(blackPulPositions[cap+dice[2].value]==1 && dice[2].used==0 && cap+dice[2].value <= range){
-      lastState = Object.assign({}, whitePulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       whitePulPositions[cap]-=1
       whitePulPositions[cap+dice[2].value]+=1
       blackPulPositions[cap+dice[2].value]-=1
@@ -488,7 +494,8 @@ function blackPlay(cap){
 
   if(isPossible){
     if((whitePulPositions[cap-dice[1].value]==0 || whitePulPositions[cap-dice[1].value]==null) && dice[1].used==0 && cap-dice[1].value >= range){
-      lastState = Object.assign({}, blackPulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
       if(isDoubles())
@@ -503,7 +510,8 @@ function blackPlay(cap){
         dice[1].used = 1
       }
     }else if(whitePulPositions[cap-dice[1].value]==1 && dice[1].used==0 && cap-dice[1].value >= range){
-      lastState = Object.assign({}, blackPulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[1].value]+=1
       whitePulPositions[cap-dice[1].value]-=1
@@ -520,7 +528,8 @@ function blackPlay(cap){
         dice[1].used = 1
       }
     }else if((whitePulPositions[cap-dice[2].value]==0 || whitePulPositions[cap-dice[2].value]==null) && dice[2].used==0 && cap-dice[2].value >= range){
-      lastState = Object.assign({}, blackPulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
       if(isDoubles())
@@ -535,7 +544,8 @@ function blackPlay(cap){
         dice[2].used = 1
       }
     }else if(whitePulPositions[cap-dice[2].value]==1 && dice[2].used==0 && cap-dice[2].value >= range){
-      lastState = Object.assign({}, blackPulPositions)
+      lastStateWhite = Object.assign({}, whitePulPositions)
+      lastStateBlack = Object.assign({}, blackPulPositions)
       blackPulPositions[cap]-=1
       blackPulPositions[cap-dice[2].value]+=1
       whitePulPositions[cap-dice[2].value]-=1
@@ -557,28 +567,17 @@ function blackPlay(cap){
 
 function undo(){
   if((dice[1].used == 1 && dice[2].used == 0)){
-    if(isWhiteTurn)
-    {
-      whitePulPositions = lastState
-    }else{
-      blackPulPositions = lastState
-    }
+    whitePulPositions = lastStateWhite
+    blackPulPositions = lastStateBlack
     dice[1].used = 0
   }else if(dice[1].used == 0 && dice[2].used == 1){
-    if(isWhiteTurn)
-    {
-      whitePulPositions = lastState
-    }else{
-      blackPulPositions = lastState
-    }
+    whitePulPositions = lastStateWhite
+    blackPulPositions = lastStateBlack
     dice[2].used = 0
   }else if(isDoubles() && dice[1].doublesUsedCounter + dice[2].doublesUsedCounter < 4 && 
             !(dice[1].used==1 && dice[2].used==1) && !(dice[1].doublesUsedCounter==0 && dice[2].doublesUsedCounter==0)){
-    if(isWhiteTurn){
-      whitePulPositions = lastState
-    }else{
-      blackPulPositions = lastState
-    }
+    whitePulPositions = lastStateWhite
+    blackPulPositions = lastStateBlack
     if(dice[1].used == 1){
       dice[1].used=0
       dice[1].doublesUsedCounter = 1
