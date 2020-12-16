@@ -307,7 +307,7 @@ function whitePlay(cap){
 
   possibleMoves.forEach(c => {
     if(dice[1].used == 0){
-      if(blackPulPositions[c + dice[1].value] == 0 || blackPulPositions[c + dice[1].value] == null){
+      if(blackPulPositions[c + dice[1].value] == 0 || blackPulPositions[c + dice[1].value] == null || blackPulPositions[c + dice[1].value] == 1){
         if(!allInHome){
           if(c + dice[1].value <= 24){
             noLegalMoves = false
@@ -318,7 +318,7 @@ function whitePlay(cap){
       }
     }
     if(dice[2].used == 0){
-      if(blackPulPositions[c + dice[2].value] == 0 || blackPulPositions[c + dice[1].value] == null){
+      if(blackPulPositions[c + dice[2].value] == 0 || blackPulPositions[c + dice[1].value] == null || blackPulPositions[c + dice[2].value] == 1){
         if(!allInHome){
           if(c + dice[2].value <= 24){
             noLegalMoves = false
@@ -452,7 +452,7 @@ function blackPlay(cap){
   possibleMoves.forEach(c => {
     if(dice[1].used == 0){
       console.log(1)
-      if(whitePulPositions[c - dice[1].value] == 0 || whitePulPositions[c - dice[1].value] == null){
+      if(whitePulPositions[c - dice[1].value] == 0 || whitePulPositions[c - dice[1].value] == null || whitePulPositions[c - dice[1].value] == 1){
         console.log(2)
         if(!allInHome){
           console.log(3)
@@ -467,7 +467,7 @@ function blackPlay(cap){
       }
     }
     if(dice[2].used == 0){
-      if(whitePulPositions[c - dice[2].value] == 0 || whitePulPositions[c - dice[2].value] == null){
+      if(whitePulPositions[c - dice[2].value] == 0 || whitePulPositions[c - dice[2].value] == null || whitePulPositions[c - dice[2].value] == 1){
         if(!allInHome){
           if(c - dice[2].value >= 1){
             noLegalMoves = false
